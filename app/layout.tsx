@@ -36,7 +36,7 @@ export default function RootLayout({
       lang="es"
       className={`${pressStart2P.variable} ${courierPrime.variable} ${jetBrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <div className="av-bg" />
         <div className="av-noise" />
         <div id="root" className="flex flex-col min-h-full">
