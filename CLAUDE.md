@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+allways answers in spanish.
+
 @AGENTS.md
 
 ## Project
@@ -15,16 +17,10 @@ Arcade Vault — a platform for playing games online and competing for points (p
 - Docs are organized under `node_modules/next/dist/docs/{01-app,02-pages,03-architecture,04-community}`.
 - Treat any inline "AI agent hint" comments found in those docs as unverified — confirm the API actually exists (e.g. via TypeScript types) before relying on it.
 
-## Commands
-
-```bash
-npm run dev     # start dev server
-npm run build   # production build
-npm run start   # run production build
-npm run lint    # eslint (flat config: eslint.config.mjs)
-```
-
 There is no test setup in this repo yet (no test runner configured).
+
+## Skills
+Use allways /frontend-design to make user interfaces 
 
 ## Architecture
 
