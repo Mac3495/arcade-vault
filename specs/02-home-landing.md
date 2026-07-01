@@ -1,6 +1,6 @@
 # Spec 02 — Home page (landing)
 
-- **Estado:** aprobado
+- **Estado:** implementado
 - **Dependencias:** Spec 01 (pantallas visuales)
 - **Fecha:** 2026-07-01
 - **Objetivo:** Reemplazar la ruta raíz `/` por la landing page del prototipo (`references/home-about/home.jsx`) —hero, features, preview de juegos, stats, actividad en vivo, pricing y CTA final—, moviendo la Biblioteca actual a `/biblioteca` y actualizando el Nav con el link "Inicio".
