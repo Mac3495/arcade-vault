@@ -15,7 +15,7 @@ export default function AuthPage() {
   const login = (name: string) => {
     localStorage.setItem(USER_KEY, JSON.stringify({ name }));
     window.dispatchEvent(new Event("av-user-changed"));
-    router.push("/");
+    router.push("/biblioteca");
   };
 
   const submit = (e: React.FormEvent) => {
