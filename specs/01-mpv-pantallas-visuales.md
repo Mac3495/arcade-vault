@@ -1,6 +1,6 @@
 # Spec 01 — Pantallas visuales de Arcade Vault
 
-- **Estado:** aprobado
+- **Estado:** implementado
 - **Dependencias:** Ninguna (primer spec del proyecto)
 - **Fecha:** 2026-07-01
 - **Objetivo:** Implementar las 5 pantallas de Arcade Vault (biblioteca, detalle de juego, reproductor placeholder, autenticación y salón de la fama) en Next.js App Router con Tailwind v4, replicando el diseño visual y las interacciones simuladas del prototipo en `references/templates/`, sin implementar lógica de juego real.
