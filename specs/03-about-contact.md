@@ -1,6 +1,6 @@
 # Spec 03 — Acerca de + contacto (Resend)
 
-- **Estado:** aprobado
+- **Estado:** implementado
 - **Dependencias:** Spec 02 (home landing) — reutiliza Nav y patrón de `app/data`
 - **Fecha:** 2026-07-02
 - **Objetivo:** Implementar la pantalla "Acerca de" (`/about`) replicando `references/home-about/about.jsx` tal cual (hero + highlights + formulario de contacto), donde el formulario envía el mensaje por correo real usando Resend a través de un Server Action.

@@ -32,11 +32,12 @@ export function Nav() {
     };
   }, [pathname]);
 
-  const isActive = (name: "home" | "biblioteca" | "salon" | "auth") => {
+  const isActive = (name: "home" | "biblioteca" | "salon" | "about" | "auth") => {
     if (name === "home") return pathname === "/";
     if (name === "biblioteca")
       return pathname.startsWith("/biblioteca") || pathname.startsWith("/games");
     if (name === "salon") return pathname.startsWith("/hall-of-fame");
+    if (name === "about") return pathname.startsWith("/about");
     return pathname.startsWith("/auth");
   };
 
@@ -67,6 +68,9 @@ export function Nav() {
           </Link>
           <Link href="/hall-of-fame" className={isActive("salon") ? "active" : ""}>
             Salón de la Fama
+          </Link>
+          <Link href="/about" className={isActive("about") ? "active" : ""}>
+            Acerca de
           </Link>
         </div>
         <div className="spacer"></div>
@@ -112,6 +116,9 @@ export function Nav() {
           onClick={close}
         >
           Salón de la Fama
+        </Link>
+        <Link href="/about" className={isActive("about") ? "active" : ""} onClick={close}>
+          Acerca de
         </Link>
         <Link href="/auth" className={isActive("auth") ? "active" : ""} onClick={close}>
           {user ? "Cuenta" : "Iniciar Sesión"}
