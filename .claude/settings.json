@@ -1,0 +1,36 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '$CLAUDE_PROJECT_DIR/.claude/hooks/format-and-lint.sh'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay '/Users/marcelotorrezazuga/Documents/Dev/claude/sounds/messenger-tono-mensaje-.mp3'"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay '/Users/marcelotorrezazuga/Documents/Dev/claude/sounds/messenger-tono-mensaje-.mp3'"
+          }
+        ]
+      }
+    ]
+  }
+}
