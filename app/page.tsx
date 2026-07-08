@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { GAMES } from "@/app/data/games";
+import { createClient } from "@/app/lib/supabase/client";
 import { RECENT_ACTIVITY, TOP_PLAYERS_TODAY } from "@/app/data/activity";
-import type { Game } from "@/app/data/games";
+import type { GameRow } from "@/app/lib/supabase/types";
 
 function useReveal() {
   useEffect(() => {
@@ -123,7 +123,7 @@ function FloatingSilhouettes() {
   );
 }
 
-function MiniCard({ game }: { game: Game }) {
+function MiniCard({ game }: { game: GameRow }) {
   const router = useRouter();
   return (
     <div className="mini-card" onClick={() => router.push(`/games/${game.id}`)}>
@@ -132,7 +132,7 @@ function MiniCard({ game }: { game: Game }) {
       </div>
       <div className="mini-meta">
         <div className="mini-title">{game.title}</div>
-        <div className="mini-cat">{game.category}</div>
+        <div className="mini-cat">{game.cat}</div>
       </div>
     </div>
   );
@@ -226,6 +226,17 @@ const FEATURES = [
 
 export default function Home() {
   useReveal();
+  const [games, setGames] = useState<GameRow[]>([]);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("games")
+      .select("*")
+      .order("title")
+      .limit(6)
+      .then(({ data }) => setGames(data ?? []));
+  }, []);
 
   return (
     <div className="home fade-in">
@@ -291,7 +302,7 @@ export default function Home() {
           <div className="section-rule"></div>
         </div>
         <div className="mini-rail">
-          {GAMES.slice(0, 6).map((g) => (
+          {games.map((g) => (
             <MiniCard key={g.id} game={g} />
           ))}
         </div>

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { GAMES } from "@/app/data/games";
-import { seededScores } from "@/app/data/leaderboard";
+import { createClient } from "@/app/lib/supabase/server";
 
 export default async function GameDetailPage({
   params,
@@ -9,10 +8,20 @@ export default async function GameDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const game = GAMES.find((g) => g.id === id);
+  const supabase = await createClient();
+
+  const { data: game } = await supabase.from("games").select("*").eq("id", id).single();
   if (!game) notFound();
 
-  const scores = seededScores(id.length * 17 + 3, 10);
+  const { data: scores } = await supabase
+    .from("scores")
+    .select("*")
+    .eq("game_id", id)
+    .order("score", { ascending: false })
+    .limit(10);
+
+  const rows = scores ?? [];
+  const best = rows[0]?.score ?? 0;
 
   return (
     <main className="av-main av-detail fade-in">
@@ -22,7 +31,7 @@ export default async function GameDetailPage({
         </div>
         <div style={{ marginTop: 20 }} className="detail-info">
           <div className="detail-tags">
-            <span>{game.category}</span>
+            <span>{game.cat}</span>
             <span>1 JUGADOR</span>
             <span>TECLADO / TÁCTIL</span>
             <span>RETRO 1985</span>
@@ -31,16 +40,12 @@ export default async function GameDetailPage({
           <p>{game.long}</p>
           <div className="stat-strip">
             <div>
-              <div className="l">Partidas</div>
-              <div className="v">{game.plays}</div>
-            </div>
-            <div>
               <div className="l">Mejor global</div>
               <div
                 className="v"
                 style={{ color: "var(--magenta)", textShadow: "0 0 6px rgba(255,0,110,0.5)" }}
               >
-                {game.best.toLocaleString("es-ES")}
+                {best.toLocaleString("es-ES")}
               </div>
             </div>
             <div>
@@ -67,23 +72,29 @@ export default async function GameDetailPage({
       <aside>
         <div className="leaderboard">
           <h3>MEJORES PUNTUACIONES</h3>
-          {scores.map((r, i) => (
-            <div
-              key={r.name}
-              className={
-                "lb-row" + (i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "")
-              }
-            >
-              <div className="rk">#{String(r.rank).padStart(2, "0")}</div>
-              <div className="pl">
-                {r.name}
-                <div style={{ fontSize: 10, color: "var(--ink-faint)", letterSpacing: "0.1em" }}>
-                  {r.date}
-                </div>
-              </div>
-              <div className="sc">{r.score.toLocaleString("es-ES")}</div>
+          {rows.length === 0 ? (
+            <div style={{ padding: "24px 8px", color: "var(--ink-faint)", textAlign: "center" }}>
+              Sé el primero en entrar al salón de la fama
             </div>
-          ))}
+          ) : (
+            rows.map((r, i) => (
+              <div
+                key={r.id}
+                className={
+                  "lb-row" + (i === 0 ? " top1" : i === 1 ? " top2" : i === 2 ? " top3" : "")
+                }
+              >
+                <div className="rk">#{String(i + 1).padStart(2, "0")}</div>
+                <div className="pl">
+                  {r.player_name}
+                  <div style={{ fontSize: 10, color: "var(--ink-faint)", letterSpacing: "0.1em" }}>
+                    {new Date(r.created_at).toLocaleDateString("es-ES")}
+                  </div>
+                </div>
+                <div className="sc">{r.score.toLocaleString("es-ES")}</div>
+              </div>
+            ))
+          )}
         </div>
       </aside>
     </main>

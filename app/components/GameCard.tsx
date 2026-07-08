@@ -2,9 +2,9 @@
 
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
-import type { Game } from "@/app/data/games";
+import type { GameWithBest } from "@/app/lib/supabase/types";
 
-export function GameCard({ game }: { game: Game }) {
+export function GameCard({ game }: { game: GameWithBest }) {
   const tiltRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -37,7 +37,7 @@ export function GameCard({ game }: { game: Game }) {
     >
       <div className="cover">
         <div className={"cover-bg " + game.cover}></div>
-        <div className="label">{game.category}</div>
+        <div className="label">{game.cat}</div>
       </div>
       <div className="meta">
         <div className="title">{game.title}</div>
