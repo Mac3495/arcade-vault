@@ -1,75 +1,23 @@
-"use client";
+import { createClient } from "@/app/lib/supabase/server";
+import { GamesBrowser } from "./GamesBrowser";
+import type { GameWithBest } from "@/app/lib/supabase/types";
 
-import { useMemo, useState } from "react";
-import { GAMES, CATEGORIES } from "@/app/data/games";
-import { GameCard } from "@/app/components/GameCard";
+export default async function BibliotecaPage() {
+  const supabase = await createClient();
+  const { data: games } = await supabase.from("games").select("*").order("title");
+  const { data: scores } = await supabase.from("scores").select("game_id, score");
 
-export default function Home() {
-  const [q, setQ] = useState("");
-  const [cat, setCat] = useState<(typeof CATEGORIES)[number]>("TODOS");
+  const bestByGame = new Map<string, number>();
+  for (const row of scores ?? []) {
+    if ((bestByGame.get(row.game_id) ?? 0) < row.score) {
+      bestByGame.set(row.game_id, row.score);
+    }
+  }
 
-  const filtered = useMemo(() => {
-    return GAMES.filter(
-      (g) =>
-        (cat === "TODOS" || g.category === cat) &&
-        g.title.toLowerCase().includes(q.toLowerCase())
-    );
-  }, [q, cat]);
+  const gamesWithBest: GameWithBest[] = (games ?? []).map((g) => ({
+    ...g,
+    best: bestByGame.get(g.id) ?? 0,
+  }));
 
-  return (
-    <main className="av-main fade-in">
-      <section className="av-hero">
-        <h1 className="pixel flicker">ARCADE VAULT</h1>
-        <div className="sub">
-          INSERTA UNA MONEDA PARA JUGAR <span className="blink">_</span>
-        </div>
-      </section>
-
-      <div className="av-filters">
-        <div className="av-search">
-          <span className="ico">⌕</span>
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Buscar un juego por nombre…"
-          />
-        </div>
-        <div className="av-chips">
-          {CATEGORIES.map((c) => (
-            <button
-              key={c}
-              className={"chip" + (cat === c ? " active" : "")}
-              onClick={() => setCat(c)}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="av-grid">
-        {filtered.map((g) => (
-          <GameCard key={g.id} game={g} />
-        ))}
-        {filtered.length === 0 && (
-          <div
-            style={{
-              gridColumn: "1 / -1",
-              textAlign: "center",
-              padding: 80,
-              color: "var(--ink-faint)",
-            }}
-          >
-            <div
-              className="pixel"
-              style={{ fontSize: 14, color: "var(--magenta)", marginBottom: 12 }}
-            >
-              NO HAY RESULTADOS
-            </div>
-            <div>Intenta otra búsqueda o categoría.</div>
-          </div>
-        )}
-      </div>
-    </main>
-  );
+  return <GamesBrowser games={gamesWithBest} />;
 }

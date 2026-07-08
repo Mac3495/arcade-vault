@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { GAMES } from "@/app/data/games";
+import { createClient } from "@/app/lib/supabase/client";
 
 const AsteroidsGame = dynamic(
   () => import("@/components/games/AsteroidsGame").then((m) => m.AsteroidsGame),
@@ -11,10 +11,9 @@ const AsteroidsGame = dynamic(
 );
 
 type StoredUser = { name: string };
-type StoredScore = { game: string; score: number; name: string; at: number };
 
 const USER_KEY = "av_user";
-const SCORES_KEY = "av_scores";
+const PLAYER_NAME_KEY = "av_player_name";
 
 function readUser(): StoredUser | null {
   try {
@@ -25,7 +24,8 @@ function readUser(): StoredUser | null {
   }
 }
 
-const game = GAMES.find((g) => g.id === "asteroids")!;
+const GAME_ID = "asteroids";
+const GAME_TITLE = "ASTEROIDS";
 
 export default function AsteroidsPlayPage() {
   const router = useRouter();
@@ -36,12 +36,19 @@ export default function AsteroidsPlayPage() {
   const [over, setOver] = useState(false);
   const [name, setName] = useState("INVITADO");
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [gameKey, setGameKey] = useState(0);
 
   useEffect(() => {
     const user = readUser();
     if (user) setName(user.name);
   }, []);
+
+  useEffect(() => {
+    if (!over) return;
+    const storedName = localStorage.getItem(PLAYER_NAME_KEY);
+    if (storedName) setName(storedName);
+  }, [over]);
 
   const endGame = () => {
     setPaused(true);
@@ -58,16 +65,19 @@ export default function AsteroidsPlayPage() {
     setGameKey((k) => k + 1);
   };
 
-  const saveScore = () => {
-    const entry: StoredScore = { game: game.id, score, name, at: Date.now() };
-    try {
-      const all: StoredScore[] = JSON.parse(localStorage.getItem(SCORES_KEY) || "[]");
-      all.push(entry);
-      localStorage.setItem(SCORES_KEY, JSON.stringify(all));
-    } catch {
-      localStorage.setItem(SCORES_KEY, JSON.stringify([entry]));
-    }
+  const saveScore = async () => {
+    if (saving || saved) return;
+    setSaving(true);
+    localStorage.setItem(PLAYER_NAME_KEY, name);
+    const supabase = createClient();
+    await supabase.from("scores").insert({
+      game_id: GAME_ID,
+      player_name: name,
+      score,
+      user_id: null,
+    });
     setSaved(true);
+    setSaving(false);
   };
 
   return (
@@ -101,7 +111,7 @@ export default function AsteroidsPlayPage() {
             <button className="btn magenta" onClick={endGame}>
               FIN
             </button>
-            <button className="btn ghost" onClick={() => router.push(`/games/${game.id}`)}>
+            <button className="btn ghost" onClick={() => router.push(`/games/${GAME_ID}`)}>
               SALIR
             </button>
           </div>
@@ -138,7 +148,7 @@ export default function AsteroidsPlayPage() {
           <div className="crt-bottom">
             <span className="led">SEÑAL OK</span>
             <span>
-              {game.title} · CRT-83 · 60 HZ
+              {GAME_TITLE} · CRT-83 · 60 HZ
             </span>
             <span>CARGA · 1MB</span>
           </div>
@@ -157,8 +167,8 @@ export default function AsteroidsPlayPage() {
                     onChange={(e) => setName(e.target.value.toUpperCase().slice(0, 10))}
                     placeholder="TUS INICIALES"
                   />
-                  <button className="btn yellow" onClick={saveScore}>
-                    GUARDAR PUNTUACIÓN
+                  <button className="btn yellow" onClick={saveScore} disabled={saving}>
+                    {saving ? "GUARDANDO…" : "GUARDAR PUNTUACIÓN"}
                   </button>
                 </div>
               ) : (
