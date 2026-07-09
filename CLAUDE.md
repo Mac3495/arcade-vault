@@ -8,7 +8,7 @@ allways answers in spanish.
 
 ## Project
 
-Arcade Vault — a platform for playing games online and competing for points (per README.md, in Spanish). Currently a bare `create-next-app` scaffold (App Router, TypeScript, Tailwind v4) with no game logic yet.
+Arcade Vault — a platform for playing games online and competing for points (per README.md, in Spanish). App Router + TypeScript + Tailwind v4, backed by Supabase (auth + `games`/`scores` tables). Three canvas games are implemented: Asteroids, Tetris, Arkanoid.
 
 ## Critical: this is not stock Next.js
 
@@ -20,7 +20,11 @@ Arcade Vault — a platform for playing games online and competing for points (p
 There is no test setup in this repo yet (no test runner configured).
 
 ## Skills
-Use allways /frontend-design to make user interfaces 
+Use allways /frontend-design to make user interfaces
+
+Project-local skills in `.claude/skills/`:
+- `/spec` and `/spec-impl` — Spec Driven Design workflow (from `Klerith/fernando-skills`). Specs live in `specs/NN-slug.md`, numbered sequentially, with `Borrador`/`Aprobado`/`Implementado` status.
+- `/add-game <carpeta o descripción>` — generates a new `specs/NN-<id>-game.md` for adding a canvas game (component + play page + `games` row + leaderboard wiring). Writes only the spec, never code; run `/spec-impl NN` afterward to implement it. Requires spec 06 (games/scores tables) to already exist.
 
 ## Architecture
 
@@ -28,4 +32,18 @@ Use allways /frontend-design to make user interfaces
 - Path alias `@/*` maps to the repo root (see `tsconfig.json`).
 - Styling: Tailwind CSS v4 via `@tailwindcss/postcss` (no `tailwind.config.*` file — v4 uses CSS-based config in `app/globals.css`).
 - Fonts: `next/font/google` (Geist, Geist Mono), wired into `layout.tsx` via CSS variables.
-- README references a "Spec Driven Design" workflow using `/spec` and `/spec-impl` commands from `Klerith/fernando-skills` (installed via `npx skills@latest add Klerith/fernando-skills`) — check for these skills/commands if asked to plan or implement a spec-driven feature.
+- Spec Driven Design workflow via `/spec` and `/spec-impl` (see Skills above). Implemented specs so far (`specs/`): 01 pantallas visuales, 02 home landing, 03 about/contact, 04 Supabase setup/auth, 05 Asteroids game, 06 games table + leaderboard (Supabase), 07 Arkanoid game (Tetris shipped without its own numbered spec file).
+
+### Supabase
+
+- Client helpers: `app/lib/supabase/client.ts` (browser) and `app/lib/supabase/server.ts` (server components/actions).
+- Types: `app/lib/supabase/types.ts` exports `GameRow`, `ScoreRow`, `GameWithBest` — manual TS types matching the `games` and `scores` tables (no generated types).
+- `games` (id, title, short, long, cat, cover, color, created_at) and `scores` (id, game_id FK, player_name, score, user_id nullable, created_at) tables back all game listings and leaderboards — no local seed arrays anymore.
+- Auth is wired (`app/auth/`) but `scores.user_id` is currently always `null`; no RLS yet.
+
+### Games
+
+- Each game lives under `app/games/<id>/` with a `page.tsx` (detail + leaderboard) and `play/page.tsx` (the actual game), plus a canvas component in `components/games/<Name>Game.tsx`.
+- Pattern: React wraps a canvas game loop; game-over is surfaced via a React modal (not drawn on canvas) that saves the score to Supabase, pre-filling player name from `localStorage` (`av_player_name`).
+- `app/games/[id]/page.tsx` and `app/hall-of-fame/` render dynamically from the `games`/`scores` tables — adding a row to `games` is enough to make a game appear across the app.
+- Implemented games: (see `references/implemented-games.md` when you need check the games).
