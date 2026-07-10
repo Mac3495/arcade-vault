@@ -413,7 +413,7 @@ export function TetrisGame({
       ref={canvasRef}
       width={430}
       height={600}
-      style={{ width: "100%", height: "100%", objectFit: "contain" }}
+      style={{ maxWidth: "100%", height: "auto", display: "block" }}
     />
   );
 }
