@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/app/lib/supabase/client";
+import { useIsTouchDevice } from "@/lib/hooks/useIsTouchDevice";
+import TouchControls from "@/components/ui/TouchControls";
 
 const AsteroidsGame = dynamic(
   () => import("@/components/games/AsteroidsGame").then((m) => m.AsteroidsGame),
@@ -29,6 +31,7 @@ const GAME_TITLE = "ASTEROIDS";
 
 export default function AsteroidsPlayPage() {
   const router = useRouter();
+  const isTouchDevice = useIsTouchDevice();
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [level, setLevel] = useState(1);
@@ -153,6 +156,8 @@ export default function AsteroidsPlayPage() {
             <span>CARGA · 1MB</span>
           </div>
         </div>
+
+        {isTouchDevice && <TouchControls variant="joystick" />}
 
         {over && (
           <div className="modal-bd">
