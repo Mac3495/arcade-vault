@@ -26,6 +26,12 @@ Project-local skills in `.claude/skills/`:
 - `/spec` and `/spec-impl` — Spec Driven Design workflow (from `Klerith/fernando-skills`). Specs live in `specs/NN-slug.md`, numbered sequentially, with `Borrador`/`Aprobado`/`Implementado` status.
 - `/add-game <carpeta o descripción>` — generates a new `specs/NN-<id>-game.md` for adding a canvas game (component + play page + `games` row + leaderboard wiring). Writes only the spec, never code; run `/spec-impl NN` afterward to implement it. Requires spec 06 (games/scores tables) to already exist.
 
+## Agents
+
+Project-local subagent in `.claude/agents/`:
+- `game-planner` — decides which new game fits Arcade Vault next. Reads `references/implemented-games.md` (already shipped) and `references/game-suggestions-todo.md` (its own persistent memory of past suggestions) to avoid repeats, optionally uses WebSearch for ideas, proposes 1-3 candidates with the fields `/add-game` needs, and only appends to `references/game-suggestions-todo.md` after explicit user confirmation. Writes no code or specs — hands off to `/add-game`.
+- `game-jam` — single-spec worker for a game-jam flow. Given a theme (e.g. "juego sobre café"), the main assistant launches **3 parallel instances** of this agent, one per fixed category (variant 1=ARCADE, 2=PUZZLE, 3=SHOOTER), each designing one original game and writing a full spec to `specs/game-jam/<theme-slug>-<variant>-<id>.md` (status `Borrador (candidato game-jam)`), following the same structure as `specs/07-arkanoid-game.md`. Writes no code. After the user compares and picks a winner, promote it to a numbered `specs/NN-<id>-game.md` and run `/spec-impl NN`.
+
 ## Architecture
 
 - App Router only (`app/` directory) — `app/layout.tsx` is the root layout, `app/page.tsx` is the home route. No Pages Router.
