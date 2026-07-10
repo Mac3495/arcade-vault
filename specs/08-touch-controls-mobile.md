@@ -1,6 +1,6 @@
 # SPEC 08 — Controles táctiles para dispositivos móviles
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** 05-asteroids-game, 07-arkanoid-game (Tetris implementado sin spec propio)
 > **Fecha:** 2026-07-10
 > **Objetivo:** Agregar controles táctiles (joystick+botón en Asteroids, D-pad+botones en Tetris, botones ←/→ en Arkanoid) que se muestran automáticamente en dispositivos touch, junto con canvas escalado responsivamente, sin modificar la lógica interna de los tres juegos.
@@ -90,19 +90,19 @@ El componente no expone estado hacia afuera — su único efecto es despachar `K
 
 ## Acceptance criteria
 
-- [ ] `useIsTouchDevice()` devuelve `true` en dispositivos/emulación con `pointer: coarse` y `false` en desktop con mouse.
-- [ ] En desktop (sin touch), ninguna de las tres play-pages muestra `TouchControls` — el comportamiento por teclado/mouse es idéntico al actual.
-- [ ] En emulación/dispositivo táctil, `/games/asteroids/play` muestra un joystick virtual + botón de disparo debajo del canvas.
-- [ ] En emulación/dispositivo táctil, `/games/tetris/play` muestra un D-pad (←/→/↓) + botón ROTAR + botón CAÍDA debajo del canvas.
-- [ ] En emulación/dispositivo táctil, `/games/arkanoid/play` muestra botones ←/→ debajo del canvas.
-- [ ] Tocar cada control mueve/rota/dispara correctamente en su juego correspondiente, sin necesidad de teclado físico.
-- [ ] Soltar un control táctil detiene la acción (equivalente a soltar la tecla) — no queda "pegado" en movimiento continuo.
-- [ ] Los tres canvases se ven completos, sin scroll horizontal, en un viewport de 375px de ancho.
-- [ ] La resolución interna de dibujo de los canvases (`width`/`height` del elemento `<canvas>`) no cambia — solo su tamaño visual vía CSS.
-- [ ] Tocar los controles táctiles no dispara scroll ni zoom accidental de la página.
-- [ ] El modal de game over, el HUD React y el guardado de score en Supabase siguen funcionando sin cambios en los tres juegos.
-- [ ] `npm run build` completa sin errores de TypeScript.
-- [ ] Ninguna ruta existente devuelve 500.
+- [x] `useIsTouchDevice()` devuelve `true` en dispositivos/emulación con `pointer: coarse` y `false` en desktop con mouse.
+- [x] En desktop (sin touch), ninguna de las tres play-pages muestra `TouchControls` — el comportamiento por teclado/mouse es idéntico al actual.
+- [x] En emulación/dispositivo táctil, `/games/asteroids/play` muestra un joystick virtual + botón de disparo debajo del canvas.
+- [x] En emulación/dispositivo táctil, `/games/tetris/play` muestra un D-pad (←/→/↓) + botón ROTAR + botón CAÍDA debajo del canvas.
+- [x] En emulación/dispositivo táctil, `/games/arkanoid/play` muestra botones ←/→ debajo del canvas.
+- [x] Tocar cada control mueve/rota/dispara correctamente en su juego correspondiente, sin necesidad de teclado físico.
+- [x] Soltar un control táctil detiene la acción (equivalente a soltar la tecla) — no queda "pegado" en movimiento continuo.
+- [x] Los tres canvases se ven completos, sin scroll horizontal, en un viewport de 375px de ancho.
+- [x] La resolución interna de dibujo de los canvases (`width`/`height` del elemento `<canvas>`) no cambia — solo su tamaño visual vía CSS.
+- [x] Tocar los controles táctiles no dispara scroll ni zoom accidental de la página.
+- [x] El modal de game over, el HUD React y el guardado de score en Supabase siguen funcionando sin cambios en los tres juegos.
+- [x] `npm run build` completa sin errores de TypeScript.
+- [x] Ninguna ruta existente devuelve 500.
 
 ---
 

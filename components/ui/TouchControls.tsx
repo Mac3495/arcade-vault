@@ -6,8 +6,18 @@ export interface TouchControlsProps {
   variant: TouchControlsVariant;
 }
 
+const CODE_TO_KEY: Record<string, string> = {
+  ArrowLeft: "ArrowLeft",
+  ArrowRight: "ArrowRight",
+  ArrowUp: "ArrowUp",
+  ArrowDown: "ArrowDown",
+  Space: " ",
+};
+
 function dispatchKey(type: "keydown" | "keyup", code: string) {
-  window.dispatchEvent(new KeyboardEvent(type, { code, bubbles: true }));
+  document.dispatchEvent(
+    new KeyboardEvent(type, { code, key: CODE_TO_KEY[code] ?? code, bubbles: true }),
+  );
 }
 
 function TouchButton({

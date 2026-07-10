@@ -121,7 +121,7 @@ export default function TetrisPlayPage() {
         </div>
 
         <div className="crt">
-          <div className="crt-screen">
+          <div className="crt-screen" style={{ aspectRatio: "430 / 600" }}>
             <div className="game-arena">
               <TetrisGame
                 key={gameKey}
